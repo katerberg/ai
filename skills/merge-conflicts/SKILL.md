@@ -1,10 +1,10 @@
 ---
 name: merge-conflicts
 description: >-
-  Resolve Git merge conflicts conservatively using Graphite, continue the
-  interrupted operation with gt continue, and summarize the resolution and its
-  risks without pushing. Use when the user asks to fix merge conflicts or
-  continue a conflicted Graphite operation.
+  Restack a Graphite branch when needed, resolve Git merge conflicts
+  conservatively, continue the interrupted operation with gt continue, and
+  summarize the resolution and its risks without pushing. Use when the user asks
+  to fix merge conflicts or continue a conflicted Graphite operation.
 ---
 
 # Merge Conflicts
@@ -15,10 +15,14 @@ sides when they are compatible, and avoid unrelated cleanup or refactoring.
 ## Step 1: Inspect the Conflict
 
 1. Run `git status` to identify the interrupted operation and conflicted files.
-2. Read each conflicted file, its conflict markers, and enough surrounding code
+2. If there is no interrupted operation or conflict, inspect the Graphite stack.
+   If the current branch needs restacking, run `gt restack`, then restart this
+   skill from Step 1. If no restack is needed, report that there is no conflict
+   to resolve and stop.
+3. Read each conflicted file, its conflict markers, and enough surrounding code
    to understand both sides.
-3. Inspect relevant history or diffs when the intended resolution is unclear.
-4. Ask the user a focused question only when the correct behavior cannot be
+4. Inspect relevant history or diffs when the intended resolution is unclear.
+5. Ask the user a focused question only when the correct behavior cannot be
    determined safely from the code and history.
 
 ## Step 2: Resolve Conservatively
