@@ -13,6 +13,7 @@ Clone this repository at `~/src/ai`, then make its skills available to Cursor:
 
 ```bash
 ln -s ~/src/ai/skills/ ~/.cursor/skills
+ln -s ~/src/ai/skills/ ~/.agents/skills
 ```
 
 The command expects `~/.cursor/skills` not to exist already. If it does, move or
