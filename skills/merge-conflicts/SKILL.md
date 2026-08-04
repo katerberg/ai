@@ -43,12 +43,29 @@ sides when they are compatible, and avoid unrelated cleanup or refactoring.
 4. Verify the operation completed and inspect the final status and diff.
 5. Do not push.
 
-## Step 4: Report
+## Step 4: Verify Against Semantic Conflicts
+
+Lint and type checks alone do not catch semantic conflicts — code where both
+sides merge cleanly (or typecheck cleanly) but interact incorrectly at
+runtime. After the operation completes:
+
+1. Run the test suites that cover the conflicted files and any files both
+   branches touched — not just the fast unit suite. If the repository's CI or
+   preflight runs additional suites (e.g. a slow integration or Meteor/Mocha
+   suite), run those too, or explicitly report them as not run.
+2. If a suite is too slow to run in full and cannot be scoped, say so in the
+   report rather than implying it passed.
+3. Treat any new failure as part of the conflict resolution: diagnose whether
+   it comes from the interaction of the two sides and fix it before reporting
+   success.
+
+## Step 5: Report
 
 Summarize:
 
 - Which files conflicted and how each conflict was resolved
-- Which checks were run and whether they passed
+- Which checks and test suites were run and whether they passed, and which
+  suites were skipped
 - Any behavioral uncertainty or risk introduced
 - Whether the Graphite operation completed successfully
 
