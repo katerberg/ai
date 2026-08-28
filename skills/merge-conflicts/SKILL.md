@@ -1,10 +1,11 @@
 ---
 name: merge-conflicts
 description: >-
-  Restack a Graphite branch when needed, resolve Git merge conflicts
-  conservatively, continue the interrupted operation with gt continue, and
-  summarize the resolution and its risks without pushing. Use when the user asks
-  to fix merge conflicts or continue a conflicted Graphite operation.
+  Sync and restack a Graphite branch, resolve Git merge conflicts
+  conservatively, continue the interrupted operation with gt continue, validate
+  the result with a clean gt sync, and summarize the resolution and its risks
+  without pushing. Use when the user asks to fix merge conflicts or continue a
+  conflicted Graphite operation.
 ---
 
 # Merge Conflicts
@@ -15,14 +16,16 @@ sides when they are compatible, and avoid unrelated cleanup or refactoring.
 ## Step 1: Inspect the Conflict
 
 1. Run `git status` to identify the interrupted operation and conflicted files.
-2. If there is no interrupted operation or conflict, inspect the Graphite stack.
-   If the current branch needs restacking, run `gt restack`, then restart this
-   skill from Step 1. If no restack is needed, report that there is no conflict
-   to resolve and stop.
-3. Read each conflicted file, its conflict markers, and enough surrounding code
+2. If there is no interrupted operation or conflict, run `gt sync`. This is the
+   command that starts the required restack and exposes any conflicts; do not
+   stop after inspecting the stack or run `gt restack` as a substitute.
+3. If `gt sync` passes cleanly, report that there is no conflict to resolve and
+   stop. If it starts a restack and reports a conflict, restart this skill from
+   Step 1.
+4. Read each conflicted file, its conflict markers, and enough surrounding code
    to understand both sides.
-4. Inspect relevant history or diffs when the intended resolution is unclear.
-5. Ask the user a focused question only when the correct behavior cannot be
+5. Inspect relevant history or diffs when the intended resolution is unclear.
+6. Ask the user a focused question only when the correct behavior cannot be
    determined safely from the code and history.
 
 ## Step 2: Resolve Conservatively
@@ -40,8 +43,11 @@ sides when they are compatible, and avoid unrelated cleanup or refactoring.
 1. Stage only the resolved files.
 2. Run `gt continue`.
 3. If Graphite reports another conflict, repeat this workflow.
-4. Verify the operation completed and inspect the final status and diff.
-5. Do not push.
+4. After the operation completes, run `gt sync` again. It must pass cleanly;
+   if it starts another restack or reports another conflict, repeat this
+   workflow until `gt sync` succeeds.
+5. Inspect the final status and diff.
+6. Do not push.
 
 ## Step 4: Verify Against Semantic Conflicts
 
@@ -68,6 +74,7 @@ Summarize:
   suites were skipped
 - Any behavioral uncertainty or risk introduced
 - Whether the Graphite operation completed successfully
+- Whether the final `gt sync` passed cleanly
 
 Be explicit when no meaningful risk was identified. Never claim the resolution
 is risk-free if checks were skipped or intent remained ambiguous.
