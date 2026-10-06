@@ -20,7 +20,7 @@ Use it when the user is **designing** (Plan mode, “flesh out a plan”, “one
 Skip it when:
 
 - The task is a typo, one-file bug fix, or “implement the attached plan.”
-- Decisions are already locked in-thread and the user wants a plan *now*.
+- Decisions are already locked in-thread and the user wants a plan _now_.
 - They explicitly want a thin plan or to skip questions.
 
 If skipped, say so in one line.
@@ -29,8 +29,10 @@ If skipped, say so in one line.
 
 1. **Do not write the implementation plan until after the question round** (or the user says “lock defaults and plan”).
 2. **Do not leave open questions in the plan.** No TBD, no “Option A vs B”, no “prefer X if Y”, no “optional.”
-3. **Do not drip 1–5 questions** as the whole interrogation. Cursor Plan mode’s “ask 1–2 critical questions” does **not** override this skill.
-4. **Do not use a 1–2 item multiple-choice widget** (`AskQuestion` / similar) as the primary vehicle. Put the list in the **chat message**.
+3. **Do not drip 1–5 questions** as the whole interrogation. Harness defaults
+   that ask only 1–2 “critical” questions do **not** override this skill.
+4. **Do not use a 1–2 item multiple-choice widget** as the primary vehicle.
+   Put the list in the **chat message** (not a tiny MCQ picker).
 5. Every dump has **both** sections: **Decide** and **Proposed locks** (Proposed locks may be short, never omitted).
 6. Number **Decide** items `1…N` continuously so the user can answer `1: interior only`. Number **Proposed locks** `A…Z` (then `AA…` if needed).
 7. After answers: **lock skipped Decide items yourself**, treat approved Proposed locks as locked, state each default in one line, and plan against it.
@@ -45,7 +47,7 @@ research (silent) → one dump (Decide + Proposed locks) → wait → lock + pla
 
 Spend the turn on the **current world**, not on guessing.
 
-- Read existing `docs/`, `.cursor/plans/`, README “Where do I…?”, and nearby code.
+- Read existing `docs/`, README “Where do I…?”, and nearby code.
 - Explore in parallel (subagents / greps) when the surface is large.
 - Note what already exists that the feature might reuse or break.
 
@@ -53,7 +55,7 @@ Then open the question message with a **short** “today’s world” restatemen
 
 ### 2. One dump: Decide + Proposed locks
 
-Write **one message** with two sections. Read [references/question-lenses.md](references/question-lenses.md) and cover every applicable lens **somewhere in the dump** (Decide *or* Proposed locks). Skip a lens only if it cannot apply. Do not skip **scope**, **failure**, **docs**, or **v1 vs out of scope**.
+Write **one message** with two sections. Read [references/question-lenses.md](references/question-lenses.md) and cover every applicable lens **somewhere in the dump** (Decide _or_ Proposed locks). Skip a lens only if it cannot apply. Do not skip **scope**, **failure**, **docs**, or **v1 vs out of scope**.
 
 #### Decide
 
@@ -90,24 +92,30 @@ After answers (or “lock defaults”):
 
 Every plan includes a **docs** deliverable (`docs/`, README, folder READMEs) or **Docs: none** plus a one-line reason. Same PR as the code when the host repo expects that.
 
+Every **code-changing** plan ends with the `ship-plan` skill. The plan will likely be implemented by an unattended cloud agent, so all questions are asked **before** the lock; the plan itself must be fully self-contained.
+
 ## Harness notes
 
-| Harness | Do this |
-|---------|---------|
-| **Cursor Plan mode** | Research + dump in chat. **Do not** `CreatePlan` until after answers. Ignore the 1–2-question default. After lock, `CreatePlan` with a complete plan (no questions inside). |
-| **Cursor Agent / Cloud** | Same phases. If you must emit a file before answers, write `INTERROGATION` only (Decide + Proposed locks + “plan after answers”) — never a fake complete plan. |
-| **Claude Code, Codex, others** | Same phases. After lock, write `.cursor/plans/<name>.plan.md` (or the repo’s usual plans dir). No Cursor-only tools required. |
+Same phases on every product. When a product has its own plan UI, adapt:
+
+| Harness                        | Do this                                                                                                                                                                     |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Cursor Plan mode**           | Research + dump in chat. **Do not** create the plan artifact until after answers. Ignore the 1–2-question default. After lock, emit a complete plan (no questions inside). |
+| **Cursor Agent / Cloud**       | Same phases. If you must emit a file before answers, write `INTERROGATION` only (Decide + Proposed locks + “plan after answers”) — never a fake complete plan.              |
+| **Claude Code, Codex, others** | Same phases. No product-specific plan tools required.                                                                                                                       |
 
 If a tool **forces** a plan artifact on the first turn: the artifact is the interrogation stub, not the implementation plan.
 
 ## Anti-patterns
 
 - Plan with “open questions” or alternatives for the user to resolve later
-- AskQuestion / 1–2 MCQs instead of the dump
+- Tiny 1–2 item MCQ pickers instead of the dump
 - Padding Decide with obvious / research-settled items instead of Proposed locks
 - Omitting the Proposed locks section
 - “Any other preferences?” as a substitute for lens coverage
 - Creating todos for code/tests and omitting docs
+- Omitting the `ship-plan` step from a code-changing plan
+- A plan whose acceptance tests do not say how to check runtime behavior (commands, flags, or live-check recipe per project docs)
 - Implementation starting during the question round
 
 ## Done when
@@ -115,3 +123,5 @@ If a tool **forces** a plan artifact on the first turn: the artifact is the inte
 - User received one Decide + Proposed locks dump covering the lenses
 - Plan has **zero** unresolved choices
 - A weaker model could implement from files + tests + docs sections alone
+- Code-changing plans end with the `ship-plan` step and give a concrete
+  verify / live-check recipe for any runtime or presentation surfaces

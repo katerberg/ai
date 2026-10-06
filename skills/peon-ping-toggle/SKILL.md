@@ -1,6 +1,8 @@
 ---
 name: peon-ping-toggle
-description: Toggle peon-ping sound notifications on/off. Use when user wants to mute, unmute, pause, or resume peon sounds during a Claude Code session.
+description: >-
+  Toggle peon-ping sound notifications on/off. Use when the user wants to mute,
+  unmute, pause, or resume peon sounds (Claude Code peon-ping hook).
 user_invocable: true
 ---
 
@@ -8,7 +10,7 @@ user_invocable: true
 
 Toggle peon-ping sounds on or off.
 
-Run the following command using the Bash tool:
+Run:
 
 ```bash
 bash ~/.claude/hooks/peon-ping/peon.sh --toggle

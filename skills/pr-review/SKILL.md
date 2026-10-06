@@ -37,9 +37,11 @@ opinionated. Every finding must reference a concrete file and line range.
    If the diff is very large (>3000 lines), work file-by-file using
    `git diff origin/main...HEAD -- <path>` so you don't miss anything.
 
-3. **Read project conventions.** If AGENTS.md or .cursor/rules/ exist at the
-   repo root, skim them for codebase-specific standards the review should
-   enforce. Apply those standards when relevant.
+3. **Read project conventions.** If `AGENTS.md`, `CLAUDE.md`,
+   `docs/ARCHITECTURE.md`, `.cursor/rules/`, or `.agents/` guidance exist at
+   the repo root, skim them for codebase-specific standards the review should
+   enforce. Apply those standards when relevant (including any "logic must live
+   in X layer" or required test types).
 
 ## Step 2: Review
 
@@ -58,6 +60,7 @@ Work through the diff systematically. For every changed file, evaluate against
 | **Scalability**     | N+1 queries, unbounded loops, missing pagination, memory leaks        |
 | **Maintainability** | Tight coupling, missing error handling, brittle assumptions           |
 | **Tests**           | Missing coverage, brittle assertions, untested edge cases             |
+| **Project rules**   | Violations of AGENTS / Architecture / verification docs when present  |
 | **Consistency**     | Deviations from patterns already established in the codebase          |
 
 ## Step 3: Output
